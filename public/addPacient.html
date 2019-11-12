@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Pacient</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body style="background-image: url('/images/bcgrF.jpg'); position: relative; background-repeat: no-repeat; background-size: 100% 100vh; overflow: hidden;">
+    <div class="btn-toolbar" role="toolbar" aria-label="myMenuTool">
+        <div class="btn-group mr-2" role="group" aria-label="myMenuGroup">
+            <button type="button" class="btn btn-info btn-lg" onclick="goToHome()">Home</button>
+        </div>
+    </div>
+
+    <form method="post" action="/addPacient">
+        <div class="form-group col-md-4">
+            <label for="inputNume">Nume</label>
+            <input name="nume" type="text" class="form-control" id="inputNume" placeholder="Nume">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="inputPrenume">Prenume</label>
+            <input name="prenume" type="text" class="form-control" id="inputPrenume" placeholder="Prenume">
+        </div>
+        <div class="form-group col-md-2">
+            <label for="inputsexul">Sexul</label>
+            <select name="sex" id="inputsexul" class="form-control">
+                <option selected>M</option>
+                <option>F</option>
+            </select>
+        </div>
+        <div class="form-group col-md-12">
+            <label for="inputvarsta">Varsta</label>
+            <input type="number" name="varsta" id="inputvarsta" min="0" max="120">
+
+            <label for="inputInaltime">Inaltime (cm)</label>
+            <input type="number" name="inaltime" id="inputInaltime" min="30" max="300">
+
+            <label for="inputGreutate">Greutate (kg)</label>
+            <input type="number" name="greutate" id="inputGreutate" min="1" max="250">
+        </div>
+        <div class="form-group col-md-8">
+            <label for="inputData">Data internare</label>
+            <input id="inputData" name="dataInternare" type="datetime-local">
+
+            <label for="inputData2">Data externare</label>
+            <input id="inputData2" name="dataExternare" type="datetime-local">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="inputDiagnostic">Diagnostic</label>
+            <input name="diagnostic" type="text" class="form-control" id="inputDiagnostic" placeholder="...">
+        </div>
+        <div class="form-group col-md-8">
+            <label for="inputData3">Paraclinic programare</label>
+            <input id="inputData3" name="paraProgramari" type="datetime-local">
+
+            <label for="inputData4">Tipul explorarii</label>
+            <input id="inputData4" name="paraRezultate" type="text">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="inputTratament">Tratament</label>
+            <input name="tratament" type="text" class="form-control" id="inputTratament" placeholder="...">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="inputMedic">Medic curant</label>
+            <select name="medic" id="inputMedic" class="form-control">
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        function goToHome() {
+            window.location.replace("http://localhost:8081");
+        }
+
+        function putDoctors() {
+            $.ajax({
+                type: "GET",
+                url: "/getDoctors",
+                async: false,
+                success: function(doctors) {
+                    res = "";
+                    doctors.forEach(function (doctor) {
+                        res += "<option value=\"";
+                        res += doctor.id;
+                        res += "\">";
+                        res += doctor.nume;
+                        res += " ";
+                        res += doctor.prenume;
+                        res += "</option>";
+                        res += "<br>";
+                    });
+                    $("#inputMedic").append(res);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+        putDoctors();
+    </script>
+</body>
+</html>

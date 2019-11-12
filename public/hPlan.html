@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HPlan</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body style="background-image: url('/images/bcgr.jpg'); position: relative; background-repeat: no-repeat; background-size: 100% 100vh;">
+    <div class="btn-toolbar" role="toolbar" aria-label="myMenuTool">
+        <div class="btn-group mr-2" role="group" aria-label="myMenuGroup">
+            <button type="button" class="btn btn-info btn-lg" onclick="goToHome()">Home</button>
+        </div>
+    </div>
+
+    <div id="map" style="position: absolute; top: 70px; left: 450px; width: 50%;">
+        <img id="MyImg" src="/images/HPlan.png" usemap="#hospitalmap"/>
+    </div>
+
+    <map name="hospitalmap">
+        <!--Salon 3-->
+        <area id="s3" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="409, 18, 495, 18, 495, 23, 505, 23, 505, 28, 514, 28, 514, 125, 505, 125, 505, 129, 495, 129, 495, 134, 413, 134, 413, 128, 403, 128, 403, 125, 393, 125, 393, 22, 409, 22, 409, 18">
+        <!--Salon 1-->
+        <area id="s1" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="53, 19, 103, 19, 103, 25, 112, 25, 112, 125, 103, 125, 103, 134, 53, 134, 53, 125, 48 ,125, 48, 25, 53, 25, 53, 19">
+        <!--Salon 2-->
+        <area id="s2" class="salonArea" shape="rect" onclick="fireMod(this.id)" coords="161, 19, 224, 125">
+        <!--Salon 4-->
+        <area id="s4" class="salonArea" shape="rect" onclick="fireMod(this.id)" coords="46, 138, 112, 189">
+        <!--Salon 6-->
+        <area id="s6" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="404, 180, 500, 180, 514, 194, 514, 241, 507, 241, 507, 254, 514, 260, 514, 280, 497, 297, 414, 297, 404, 287, 404, 180">
+        <!--Salon 5-->
+        <area id="s5" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="46, 193, 112, 193, 112, 242, 103, 242, 103, 251, 46, 251, 46, 193">
+        <!--Salon 7-->
+        <area id="s7" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="277, 430, 337, 430, 337, 480, 284, 480, 284, 470, 277, 470, 277, 430">
+        <!--Salon 8-->
+        <area id="s8" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="341, 428, 397, 428, 397, 474, 389, 474, 389, 480, 341, 480, 341, 428">
+        <!--Salon 9-->
+        <area id="s9" class="salonArea" shape="poly" onclick="fireMod(this.id)" coords="162, 530, 276, 530, 276, 533, 280, 533, 280, 591, 274, 591, 274, 596, 173, 596, 173, 591, 168, 591, 168, 586, 162, 586, 162, 530">
+    </map>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        /*$(function() {
+
+            $('area').each(function(){
+                var txt=$(this).data('name');
+                var coor=$(this).attr('coords');
+                var coorA=coor.split(',');
+                var left=coorA[0];
+                var top=coorA[1];
+
+                var $span=$('<span class="map_title">'+txt+'</span>');
+                $span.css({top: top+'px', left: left+'px', position:'absolute'});
+                $span.appendTo('#map');
+            })
+
+        })*/
+        /*$(".salonArea").on("click", function(e){
+            e.preventDefault();
+
+        });*/
+        function goToHome() {
+            window.location.replace("http://localhost:8081");
+        }
+
+        function fireMod(id) {
+            $.ajax({
+                type: "GET",
+                url: "/getBeds",
+                async: false,
+                success: function(data) {
+                    res = filterBedsById(data, id);
+                    $("#modal1").modal('show');
+                    $(".modal-body").html("");
+                    $(".modal-body").html(res);
+                    $(".modal").scrollTop(0);
+                    title = "Salon ";
+                    id = id.replace('s', '');
+                    title += id;
+                    $(".modal-title").html(title);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
+        function filterBedsById(beds, idSalon) {
+            res = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>ModalBeds</title>\n" +
+                "</head>\n" +
+                "<body>\n";
+            //res = "";
+            beds.forEach(function (bed) {
+                idS = idSalon;
+                idS = idS.replace('s', '');
+                //console.log(idS);
+                //console.log(bed.salon);
+                if (bed.salon == idS) {
+                    let id = bed.id;
+                    let bedStatusBTN = "";
+                    let bedStatus = "";
+                    let dataEliberare = "Data eliberare: ";
+                    let salon = "Salon: " + bed.salon + "<br>";
+                    let pacient = "Pacient: ";
+                    let medicDetinator = "Medic Detinator: ";
+                    let medicCurant = "Medic Curant: ";
+
+                    if (bed.medic_curant != null) {
+                        if (bed.bedStatus == 0) {
+                            bedStatus = "Status Pat: LIBER<br>";
+                            bedStatusBTN = "btn-outline-success";
+                        } else if (bed.bedStatus == 1) {
+                            bedStatus = "Status Pat: REZERVAT<br>";
+                            bedStatusBTN = "btn-outline-warning";
+                        } else if (bed.bedStatus == 2) {
+                            bedStatus = "Status Pat: OCUPAT<br>";
+                            bedStatusBTN = "btn-outline-danger";
+                        } else if (bed.bedStatus == 3) {
+                            bedStatus = "Status Pat: BLOCAT<br>";
+                            bedStatusBTN = "btn-outline-dark";
+                        }
+                    } else {
+                        console.log(bed.bedStatus);
+                        if (bed.bedStatus == 0) {
+                            bedStatus = "Status Pat: LIBER<br>";
+                            bedStatusBTN = "btn-success";
+                        } else if (bed.bedStatus == 1) {
+                            bedStatus = "Status Pat: REZERVAT<br>";
+                            bedStatusBTN = "btn-warning";
+                        } else if (bed.bedStatus == 2) {
+                            bedStatus = "Status Pat: OCUPAT<br>";
+                            bedStatusBTN = "btn-danger";
+                        } else if (bed.bedStatus == 3) {
+                            bedStatus = "Status Pat: BLOCAT<br>";
+                            bedStatusBTN = "btn-dark";
+                        }
+                    }
+
+                    if (bed.data_eliberare != null) {
+                        dataEliberare += bed.data_eliberare;
+                        dataEliberare += "<br>";
+                    } else {
+                        dataEliberare += "-<br>";
+                    }
+
+                    if (bed.PacientId != null) {
+                        $.when(getPacient(bed.PacientId)).done(function (resPac) {
+                            pacient += resPac.nume;
+                            pacient += " ";
+                            pacient += resPac.prenume;
+                            pacient += "<br>";
+                        });
+                    } else {
+                        pacient += "-<br>";
+                    }
+
+                    let ptBuruiana = "-<br>";
+
+                    if (bed.medic_detinator != null) {
+                        $.when(getMedic(bed.medic_detinator)).done(function (resMed) {
+                            ptBuruiana = resMed.nume;
+                            ptBuruiana += " ";
+                            ptBuruiana += resMed.prenume;
+                            ptBuruiana += "<br>";
+                            medicDetinator += resMed.nume;
+                            medicDetinator += " ";
+                            medicDetinator += resMed.prenume;
+                            medicDetinator += "<br>";
+                        });
+                    } else {
+                        medicDetinator += "-<br>";
+                    }
+
+                    if (bed.medic_curant != null) {
+                        $.when(getMedic(bed.medic_curant)).done(function (resMed) {
+                            medicCurant += resMed.nume;
+                            medicCurant += " ";
+                            medicCurant += resMed.prenume;
+                            medicCurant += "<br>";
+                        });
+                    } else {
+                        medicCurant += ptBuruiana;
+                    }
+
+                    ceva1 = "\n" +
+                        "<div id=\"accordion\">\n" +
+                        "    <div class=\"card\">\n" +
+                        "        <div class=\"card-header\" id=\"heading" + id + "s\"><h5 class=\"mb-0\">\n" +
+                        "                <button class=\"btn collapsed " + bedStatusBTN + "\" data-toggle=\"collapse\" data-target=\"#collapse" + id + "s\" aria-expanded=\"false\" aria-controls=\"collapse" +
+                        id + "s\">Pat " + id + "</button>\n" +
+                        "            </h5>\n" +
+                        "        </div>\n" +
+                        "\n" +
+                        "        <div id=\"collapse" + id + "s\" class=\"collapse\" aria-labelledby=\"heading" + id + "s\" data-parent=\"#accordion\">\n" +
+                        "            <div class=\"card-body\">" + bedStatus + dataEliberare + salon + pacient + medicDetinator + medicCurant +
+                            "</div>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</div>\n";
+                    res += ceva1;
+                }
+            });
+            ceva2 = "</body>\n" +
+                "</html>";
+            res += ceva2;
+            return res;
+        }
+        
+        function getPacient(idP) {
+            return $.ajax({
+                type: "GET",
+                url: "/getPacient/"+idP,
+                async: false,
+                success: function(data) {},
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+        
+        function getMedic(idM) {
+            return $.ajax({
+                type: "GET",
+                url: "/getMedic/"+idM,
+                async: false,
+                success: function(data) {},
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body style="background-image: url('/images/homeBgr.jpg'); position: relative; background-repeat: no-repeat; background-size: 100% 100vh;">
+    <div style="position: absolute; top: 550px; right: 205px; width: 100%;">
+        <div class="btn-toolbar" role="toolbar" aria-label="myMenuTool" style="margin: 0 auto; height: 100px; width: 100px;">
+            <div class="btn-group mr-2" role="group" aria-label="myMenuGroup">
+                <button type="button" class="btn btn-info btn-lg" onclick="goToHospitalPlan()">Hospital Plan</button>
+                <button type="button" class="btn btn-info btn-lg" onclick="goToAddBed()">Add Bed</button>
+                <button type="button" class="btn btn-info btn-lg" onclick="goToAddDoctor()">Add Doctor</button>
+                <button type="button" class="btn btn-info btn-lg" onclick="goToAddPacient()">Add Pacient</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        function goToAddPacient() {
+            window.location.replace("http://localhost:8081/addPacient");
+        }
+
+        function goToAddDoctor() {
+            window.location.replace("http://localhost:8081/addMedic");
+        }
+
+        function goToAddBed() {
+            window.location.replace("http://localhost:8081/addBed");
+        }
+
+        function goToHospitalPlan() {
+            window.location.replace("http://localhost:8081/hPlan");
+        }
+    </script>
+</body>
+</html>

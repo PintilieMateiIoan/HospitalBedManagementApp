@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectBed</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body style="background-image: url('/images/bcgrF.jpg'); position: relative; background-repeat: no-repeat; background-size: 100% 100vh;">
+    <div id="test"></div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        function getId() {
+            $.ajax({
+                type: "GET",
+                url: "/getLastPacientId",
+                async: false,
+                success: function(data) {
+                    let idP = data.idP;
+                    let idM = data.idM;
+                    $.ajax({
+                        type: "GET",
+                        url: "/getBeds",
+                        async: false,
+                        success: function(data) {
+                            res = filterBedsById(data, idP, idM);
+                            $("#test").append(res);
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                        }
+                    });
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
+        getId();
+
+        function filterBedsById(beds, idP, idM) {
+            res = "";
+            //res = "";
+            beds.forEach(function (bed) {
+                if (bed.medic_detinator == idM) {
+                    let id = bed.id;
+                    let bedStatusBTN = "";
+                    let bedStatus = "";
+                    let dataEliberare = "Data eliberare: ";
+                    let salon = "Salon: " + bed.salon + "<br>";
+                    let pacient = "Pacient: ";
+                    let medicDetinator = "Medic detinator: ";
+                    let medicCurant = "Medic Curant: ";
+
+                    if (bed.medic_curant != null) {
+                        if (bed.bedStatus == 0) {
+                            bedStatus = "Status Pat: LIBER<br>";
+                            bedStatusBTN = "btn-outline-success";
+                        } else if (bed.bedStatus == 1) {
+                            bedStatus = "Status Pat: REZERVAT<br>";
+                            bedStatusBTN = "btn-outline-warning";
+                        } else if (bed.bedStatus == 2) {
+                            bedStatus = "Status Pat: OCUPAT<br>";
+                            bedStatusBTN = "btn-outline-danger";
+                        } else if (bed.bedStatus == 3) {
+                            bedStatus = "Status Pat: BLOCAT<br>";
+                            bedStatusBTN = "btn-outline-dark";
+                        }
+                    } else {
+                        if (bed.bedStatus == 0) {
+                            bedStatus = "Status Pat: LIBER<br>";
+                            bedStatusBTN = "btn-success";
+                        } else if (bed.bedStatus == 1) {
+                            bedStatus = "Status Pat: REZERVAT<br>";
+                            bedStatusBTN = "btn-warning";
+                        } else if (bed.bedStatus == 2) {
+                            bedStatus = "Status Pat: OCUPAT<br>";
+                            bedStatusBTN = "btn-danger";
+                        } else if (bed.bedStatus == 3) {
+                            bedStatus = "Status Pat: BLOCAT<br>";
+                            bedStatusBTN = "btn-dark";
+                        }
+                    }
+
+                    if (bed.data_eliberare != null) {
+                        dataEliberare += bed.data_eliberare;
+                        dataEliberare += "<br>";
+                    } else {
+                        dataEliberare += "-<br>";
+                    }
+
+                    if (bed.PacientId != null) {
+                        $.when(getPacient(bed.PacientId)).done(function (resPac) {
+                            pacient += resPac.nume;
+                            pacient += " ";
+                            pacient += resPac.prenume;
+                            pacient += "<br>";
+                        });
+                    } else {
+                        pacient += "-<br>";
+                    }
+
+                    if (bed.medic_detinator != null) {
+                        $.when(getMedic(bed.medic_detinator)).done(function (resMed) {
+                            medicDetinator += resMed.nume;
+                            medicDetinator += " ";
+                            medicDetinator += resMed.prenume;
+                            medicDetinator += "<br>";
+                        });
+                    } else {
+                        medicDetinator += "-<br>";
+                    }
+
+                    let k = false;
+
+                    if (bed.medic_curant != null) {
+                        $.when(getMedic(bed.medic_curant)).done(function (resMed) {
+                            medicCurant += resMed.nume;
+                            medicCurant += " ";
+                            medicCurant += resMed.prenume;
+                            medicCurant += "<br>";
+                        });
+                    } else {
+                        medicCurant += "-<br>";
+                        k = true;
+                    }
+
+                    ceva1 = "<div id=\"accordion\">\n" +
+                        "    <div class=\"card\">\n" +
+                        "        <div class=\"card-header\" id=\"heading" + id + "s\"><h5 class=\"mb-0\">\n" +
+                        "                <button class=\"btn collapsed " + bedStatusBTN + "\" data-toggle=\"collapse\" data-target=\"#collapse" + id + "s\" aria-expanded=\"false\" aria-controls=\"collapse" +
+                        id + "s\">Pat " + id + "</button>\n" +
+                        "            </h5>\n" +
+                        "        </div>\n" +
+                        "\n" +
+                        "        <div id=\"collapse" + id + "s\" class=\"collapse\" aria-labelledby=\"heading" + id + "s\" data-parent=\"#accordion\">\n" +
+                        "            <div class=\"card-body\">" + bedStatus + dataEliberare + salon + pacient + medicDetinator + medicCurant;
+                    let dataExt = null;
+                    if (bed.bedStatus == 0 && k) {
+                        $.when(getPacient(idP)).done(function (resPac) {
+                            dataExt = resPac.dataExternare;
+                        });
+                        ceva1 += "<button class=\"btn\" role=\"button\" onclick=\"reserveB(" + idP + "," + id + ",\'"+dataExt+"\')\">Rezerva</button><br>";
+                    }
+                    ceva1 += "</div>\n" +
+                        "        </div>\n" +
+                        "    </div>\n" +
+                        "</div>\n";
+                    res += ceva1;
+                }
+            });
+            return res;
+        }
+
+        function getPacient(idP) {
+            return $.ajax({
+                type: "GET",
+                url: "/getPacient/"+idP,
+                async: false,
+                success: function(data) {},
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+
+        function getMedic(idM) {
+            return $.ajax({
+                type: "GET",
+                url: "/getMedic/" + idM,
+                async: false,
+                success: function (data) {
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    alert("Please report this error: " + errorThrown + xhr.status + xhr.responseText);
+                }
+            });
+        }
+
+        function reserveB(idP, idB, dataExt) {
+            $.ajax({
+                type: "POST",
+                url: "/reserveBed",
+                async: false,
+                data: {
+                    idP: idP,
+                    idB: idB,
+                    dataExt: dataExt
+                },
+                success: function(data) {
+                    window.location.replace("http://localhost:8081");
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert("Please report this error: "+errorThrown+xhr.status+xhr.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
